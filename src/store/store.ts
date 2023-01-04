@@ -23,14 +23,9 @@ class Store {
   }
 
   addUser(user: User): User {
-    const userExists = Boolean(this.users.find((u) => 
-      u.id === user.id
-    ));
-    if (!userExists) {
-      this.users.push(user);
-      return user;
-    }
-    throw new Error('User with such id already exists!');
+    const newUser = { ...user, id: v1() };
+    this.users.push(newUser);
+    return newUser;
   }
 
   deleteUser(id: string): boolean {
@@ -43,8 +38,13 @@ class Store {
   }
 
   updateUser(user: User): User {
-    if (this.deleteUser(user.id)) {
-      return this.addUser(user);
+    const userIndex = this.users.findIndex((u) => u.id === user.id);
+    if (userIndex !== -1) {
+      this.users[userIndex] = {
+        ...this.users[userIndex],
+        ...user,
+      };
+      return this.users[userIndex];
     }
     throw new Error('No such user, please check id!');
   }
