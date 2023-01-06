@@ -50,6 +50,10 @@ class Store {
     }
     throw new Error(ERRORS_MAP.NO_USER);
   }
+
+  setUsers(users: User[]): void {
+    this.users = [...users];
+  }
 }
 
 export const store = new Store();
