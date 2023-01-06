@@ -5,9 +5,9 @@
   "main": "src/index.ts",
   "scripts": {
     "start:prod": "npx tsc && node build/index.js",
-    "multi": "npx tsc && node build/multi/multi.js",
+    "start:multi": "npx tsc && node build/multi/multi.js",
     "start:dev": "npx nodemon",
-    "test": "jest"
+    "start:test": "jest"
   },
   "repository": {
     "type": "git",
