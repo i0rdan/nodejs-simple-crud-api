@@ -1,5 +1,7 @@
-import { User } from "../interfaces/User";
 import { v1 } from "uuid";
+
+import { User } from "../interfaces/User";
+import { ERRORS_MAP } from "../utils/constants/constants";
 
 class Store {
   private users: User[] = [
@@ -19,7 +21,7 @@ class Store {
     if (user) {
       return user;
     }
-    throw new Error('No such user, please check id!');
+    throw new Error(ERRORS_MAP.NO_USER);
   }
 
   addUser(user: User): User {
@@ -34,7 +36,7 @@ class Store {
       this.users.splice(userIndex, 1);
       return true;
     }
-    throw new Error('No such user, please check id!');
+    throw new Error(ERRORS_MAP.NO_USER);
   }
 
   updateUser(user: User): User {
@@ -46,7 +48,7 @@ class Store {
       };
       return this.users[userIndex];
     }
-    throw new Error('No such user, please check id!');
+    throw new Error(ERRORS_MAP.NO_USER);
   }
 }
 

@@ -1,16 +1,17 @@
 import { User } from "../interfaces/User";
+import { ERRORS_MAP } from "./constants/constants";
 
 export function createUserFromBody(body: any): User {
   const requiredKeys = ['username', 'hobbies', 'age'];
-  const newUser = {} as User;
-  if (!requiredKeys.length) {
-    throw new Error('Body required');
+  const newUser: any = {};
+  if (!Object.keys(body).length) {
+    throw new Error(ERRORS_MAP.BODY_REQUIRED);
   }
   for (const key of requiredKeys) {
     if (!body[key]) {
-      throw new Error('Wrong key');
+      throw new Error(ERRORS_MAP.BODY_MISSED_KEY);
     }
-    (newUser as any)[key] = body[key];
+    newUser[key] = body[key];
   }
-  return newUser;
+  return newUser as User;
 }

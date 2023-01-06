@@ -1,7 +1,11 @@
 import { IncomingMessage, ServerResponse } from "http";
-import { User } from "../interfaces/User";
+import { validate } from "uuid";
 
+import { User } from "../interfaces/User";
 import { store } from "../store/store";
+import {
+  ERRORS_MAP, HTTP_STATUS_CODES_MAP
+} from "../utils/constants/constants";
 import { getIdFromUrl } from "../utils/get-id-from-url";
 import { sendResponse } from "../utils/send-response";
 
@@ -14,25 +18,41 @@ export function handlePutRoutes(req: IncomingMessage, res: ServerResponse<Incomi
         body += chunk.toString();
       })
       .on('end', () => {
-        try {
-          const parsedBody = body ? JSON.parse(body) : {};
-          const newUser = { id: userId } as User;
-          if (parsedBody['username']) {
-            newUser['username'] = parsedBody['username'];
+        if (!validate(userId)) {
+          sendResponse(
+            res,
+            ERRORS_MAP.NOT_UUID,
+            HTTP_STATUS_CODES_MAP.BAD_REQUEST
+          );
+        } else {
+          try {
+            const parsedBody = body ? JSON.parse(body) : {};
+            const newUser = { id: userId } as any;
+            ['username', 'age', 'hobbies'].forEach((f) => {
+              if (parsedBody[f]) {
+                newUser[f] = parsedBody[f];
+              }
+            });
+            const updatedUser = JSON.stringify(store.updateUser(newUser as User));
+            sendResponse(
+              res,
+              updatedUser,
+              HTTP_STATUS_CODES_MAP.OK
+            );
+          } catch {
+            sendResponse(
+              res,
+              ERRORS_MAP.NO_USER,
+              HTTP_STATUS_CODES_MAP.NOT_FOUND
+            );
           }
-          if (parsedBody['age']) {
-            newUser['age'] = parsedBody['age'];
-          }
-          if (parsedBody['hobbies']) {
-            newUser['hobbies'] = parsedBody['hobbies'];
-          }
-          const updatedUser = JSON.stringify(store.updateUser(newUser));
-          sendResponse(res, updatedUser, 200);
-        } catch {
-          sendResponse(res, 'No such user!', 400);
         }
       });
   } else {
-    sendResponse(res, 'No such endpoint', 404);
+    sendResponse(
+      res,
+      ERRORS_MAP.NO_ENDPOINT,
+      HTTP_STATUS_CODES_MAP.NOT_FOUND
+    );
   }
 }

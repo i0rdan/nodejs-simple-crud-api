@@ -1,12 +1,18 @@
 import { IncomingMessage, ServerResponse } from "http";
 
+import {
+  ERRORS_MAP, HTTP_STATUS_CODES_MAP
+} from "../utils/constants/constants";
 import { sendResponse } from "../utils/send-response";
 import { handleDeleteRoutes } from "./delete-routes";
 import { handleGetRoutes } from "./get-routes";
 import { handlePostRoutes } from "./post-routes";
 import { handlePutRoutes } from "./put-routes";
 
-export function handleMainRoute(req: IncomingMessage, res: ServerResponse<IncomingMessage>): void {
+export function handleMainRoute(
+  req: IncomingMessage,
+  res: ServerResponse<IncomingMessage>
+): void {
   switch(req.method) {
     case 'GET':
       handleGetRoutes(req, res);
@@ -21,6 +27,11 @@ export function handleMainRoute(req: IncomingMessage, res: ServerResponse<Incomi
       handlePutRoutes(req, res);
       break;
     default: 
-      sendResponse(res, 'No such endpoint', 404);
+      sendResponse(
+        res,
+        ERRORS_MAP.NO_ENDPOINT,
+        HTTP_STATUS_CODES_MAP.NOT_FOUND
+      );
+      break;
   }
 }
