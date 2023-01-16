@@ -33,6 +33,8 @@ if (cluster.isPrimary) {
     .listen(PORT, () => {
       console.log(`Main process started on ${PORT}`);
     });
+} else {
+  import('../index');
 }
 
 cluster.on('listening', (worker, address) => {

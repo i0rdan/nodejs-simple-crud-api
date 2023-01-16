@@ -12,7 +12,7 @@ const PORT = process.env.workerPort || envPort;
 export const server = createServer((req, res) => {
   handleMainRoute(req, res);
   if (process.env.workerPort) {
-    cluster.worker?.send(store.getAllUsers());
+    setImmediate(() => cluster.worker?.send(store.getAllUsers()));
   }
 });
 server.listen(PORT, () => {
